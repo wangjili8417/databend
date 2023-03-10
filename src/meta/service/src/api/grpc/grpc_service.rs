@@ -111,16 +111,7 @@ impl MetaService for MetaServiceImpl {
 
         debug!("handle handshake request, client ver: {}", protocol_version);
 
-        let min_compatible = to_digit_ver(&MIN_METACLI_SEMVER);
-
-        // backward compatibility: no version in handshake.
-        if protocol_version > 0 && protocol_version < min_compatible {
-            return Err(Status::invalid_argument(format!(
-                "meta-client protocol_version({}) < metasrv min-compatible({})",
-                from_digit_ver(protocol_version),
-                MIN_METACLI_SEMVER,
-            )));
-        }
+        
 
         let auth = BasicAuth::decode(&*payload).map_err(|e| Status::internal(e.to_string()))?;
 

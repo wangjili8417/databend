@@ -768,18 +768,7 @@ impl MetaGrpcClient {
             "talking to a very old databend-meta: upgrade databend-meta to at least 0.8"
         );
 
-        let min_compatible = to_digit_ver(min_metasrv_ver);
-        if resp.protocol_version < min_compatible {
-            let invalid_err = AnyError::error(format!(
-                "metasrv protocol_version({}) < meta-client min-compatible({})",
-                from_digit_ver(resp.protocol_version),
-                min_metasrv_ver,
-            ));
-            return Err(MetaHandshakeError::new(
-                "incompatible protocol version",
-                &invalid_err,
-            ));
-        }
+        
 
         let token = resp.payload;
         Ok(token)
