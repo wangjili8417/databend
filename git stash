@@ -1,0 +1,43 @@
+[1mdiff --git a/run.sh b/run.sh[m
+[1mdeleted file mode 100644[m
+[1mindex 6a03ae35da..0000000000[m
+[1m--- a/run.sh[m
+[1m+++ /dev/null[m
+[36m@@ -1,17 +0,0 @@[m
+[31m-#!/bin/bash[m
+[31m-for arg in "$*"[m
+[31m-do[m
+[31m-    if test "$arg" = "start"[m
+[31m-    then[m
+[31m-        ./target/debug/databend-meta -c scripts/ci/deploy/config/databend-meta-node-1.toml &[m
+[31m-        sleep 2[m
+[31m-        ./target/debug/databend-meta -c scripts/ci/deploy/config/databend-meta-node-3.toml &[m
+[31m-        sleep 2[m
+[31m-        ./target/debug/databend-meta -c scripts/ci/deploy/config/databend-meta-node-2.toml &[m
+[31m-        #./target/debug/databend-query -c scripts/ci/deploy/config/databend-query-node-1.toml &[m
+[31m-    elif test "$arg" = "stop"[m
+[31m-    then[m
+[31m-        kill $(ps -ef | grep 'databend-meta' | awk '{print $2}')[m
+[31m-        kill $(ps -ef | grep 'databend-query' | awk '{print $2}')[m
+[31m-    fi[m
+[31m-done[m
+\ No newline at end of file[m
+[1mdiff --git a/src/query/service/src/servers/mysql/mysql_federated.rs b/src/query/service/src/servers/mysql/mysql_federated.rs[m
+[1mindex 532391bfbb..14720201fb 100644[m
+[1m--- a/src/query/service/src/servers/mysql/mysql_federated.rs[m
+[1m+++ b/src/query/service/src/servers/mysql/mysql_federated.rs[m
+[36m@@ -198,13 +198,7 @@[m [mimpl MySQLFederated {[m
+     fn federated_mixed_check(&self, query: &str) -> Option<(TableSchemaRef, DataBlock)> {[m
+         #[ctor][m
+         static MIXED_RULES: Vec<(Regex, Option<(TableSchemaRef, DataBlock)>)> = vec![[m
+[31m-            ([m
+[31m-                Regex::new(r"(?i)^(SELECT VERSION\(\s*\))").unwrap(),[m
+[31m-                MySQLFederated::select_function_block([m
+[31m-                    "version()",[m
+[31m-                    format!("{}-{}", MYSQL_VERSION, DATABEND_COMMIT_VERSION.clone()).as_str(),[m
+[31m-                ),[m
+[31m-            ),[m
+[32m+[m
+             // Txn.[m
+             (Regex::new("(?i)^(ROLLBACK(.*))").unwrap(), None),[m
+             (Regex::new("(?i)^(COMMIT(.*))").unwrap(), None),[m
