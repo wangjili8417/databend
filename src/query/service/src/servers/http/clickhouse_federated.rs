@@ -49,14 +49,4 @@ impl ClickHouseFederated {
             None => None,
         }
     }
-
-    pub fn check(query: &str) -> Option<(TableSchemaRef, DataBlock)> {
-        #[ctor]
-        static SELECT_VERSION_RULES: Vec<(Regex, Option<(TableSchemaRef, DataBlock)>)> = vec![(
-            Regex::new(r".*(?i)SELECT\s*VERSION\(\)\s*;?$").unwrap(),
-            ClickHouseFederated::select_function_block("version()", CLICKHOUSE_VERSION),
-        )];
-
-        FederatedHelper::block_match_rule(query, &SELECT_VERSION_RULES)
-    }
 }
